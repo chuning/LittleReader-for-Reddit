@@ -14,7 +14,7 @@ import java.util.*
 
 class CommentsAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     var commentDetails: List<CommentDetail>? = null
-    private val PADDING_UNIT = 30
+    private val PADDING_UNIT = 20
 
     override fun getItemCount(): Int {
         return commentDetails?.size ?: 0
@@ -22,8 +22,9 @@ class CommentsAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.comment_item, parent, false)
-        val padding = PADDING_UNIT * (viewType + 1)
-        view.setPadding(padding, 0, PADDING_UNIT, 0)
+        val padding = PADDING_UNIT * viewType
+        val params = view.layoutParams as ViewGroup.MarginLayoutParams
+        params.leftMargin = padding
         return CommentsViewHolder(view)
     }
 
@@ -49,18 +50,19 @@ class CommentsAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>(){
         val commentChildrenList = comments.data.children
         for (i in (commentChildrenList.size - 1) downTo 0) {
             val child = commentChildrenList[i]
-            if (child is CommentsChildren) {
+            if (child is CommentsChildren && child.data != null) {
                 stack.push(child.data)
             }
         }
         while (!stack.isEmpty()) {
             val commentDetail = stack.pop()
             newCommentDetails.add(commentDetail)
-            if (commentDetail.replies is Comments) {
+            if (commentDetail.replies != null) {
                 val replyComments = (commentDetail.replies).data.children
                 (replyComments.size - 1 downTo 0)
                         .map { replyComments[it] }
                         .filterIsInstance<CommentsChildren>()
+                        .filter { it.data != null }
                         .forEach { stack.push(it.data) }
             }
         }

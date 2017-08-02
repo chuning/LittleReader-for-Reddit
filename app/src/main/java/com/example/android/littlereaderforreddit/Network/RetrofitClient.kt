@@ -2,10 +2,7 @@ package com.example.android.littlereaderforreddit.Network
 
 import android.content.Context
 import android.util.Log
-import com.example.android.littlereaderforreddit.Data.CommentDetail
-import com.example.android.littlereaderforreddit.Data.Comments
-import com.example.android.littlereaderforreddit.Data.CommentsOrNull
-import com.example.android.littlereaderforreddit.Data.Feeds
+import com.example.android.littlereaderforreddit.Data.*
 import com.example.android.littlereaderforreddit.RedditApplication
 import com.example.android.littlereaderforreddit.Util.Constant
 import com.facebook.stetho.okhttp3.StethoInterceptor
@@ -44,20 +41,29 @@ class RetrofitClient {
                 .addNetworkInterceptor(networkInterceptor)
                 .build()
 
-
-        val gson = GsonBuilder().create()
-        val newGson = GsonBuilder().registerTypeAdapter(CommentsOrNull::class.java, object : JsonDeserializer<CommentsOrNull> {
-            override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext?): CommentsOrNull? {
-                if (json.isJsonPrimitive && json.asString.isEmpty()) {
-                    return null
+        val gson = GsonBuilder().registerTypeAdapter(CommentDetail::class.java, object : JsonDeserializer<CommentDetail> {
+            override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext): CommentDetail? {
+                val jsonObject = json.asJsonObject
+                if (!jsonObject.has("depth") || !jsonObject.has("body")) return null
+                val depth = jsonObject.get("depth").asInt
+                val replies = jsonObject.get("replies")
+                val body = jsonObject.get("body")?.asString
+                val author = jsonObject.get("author")?.asString
+                val created = jsonObject.get("created")?.asLong
+                val score = jsonObject.get("score")?.asLong
+                if (replies == null || replies.isJsonNull
+                        || (replies.isJsonPrimitive) && replies.asString.isEmpty()) {
+                    val count = jsonObject.get("count")?.asInt
+                    return CommentDetail(depth, body, author, created, score, null, count)
                 }
-                return gson.fromJson(json, CommentsOrNull::class.java)
+                val deserializedReplies: Comments =context.deserialize(jsonObject.get("replies"), Comments::class.java)
+                return CommentDetail(depth, body, author, created, score, deserializedReplies, null)
             }
         }).create()
 
         val retrofit = Retrofit.Builder()
                 .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create(newGson))
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(client)
                 .build()
         reditApi = retrofit.create(RedditApi::class.java)
