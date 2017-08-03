@@ -45,6 +45,7 @@ class CommentsAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     }
 
     fun setComments(comments: Comments) {
+        // in-order traverse using stack
         val newCommentDetails = ArrayList<CommentDetail>()
         val stack = Stack<CommentDetail>()
         val commentChildrenList = comments.data.children

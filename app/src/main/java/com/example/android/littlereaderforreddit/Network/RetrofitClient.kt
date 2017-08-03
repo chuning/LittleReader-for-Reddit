@@ -108,4 +108,8 @@ class RetrofitClient {
         return reditApi.getComments(id)
     }
 
+    fun getSubreddits(): Call<SubredditResponse> {
+        return reditApi.getSubreddits()
+    }
+
 }
