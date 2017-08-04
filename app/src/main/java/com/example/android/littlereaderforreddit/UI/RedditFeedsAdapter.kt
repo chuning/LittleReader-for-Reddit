@@ -7,18 +7,23 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.android.littlereaderforreddit.Data.FeedChildren
 import com.example.android.littlereaderforreddit.Data.FeedDetail
-import com.example.android.littlereaderforreddit.Data.Subreddit
-import com.example.android.littlereaderforreddit.Data.SubredditResponse
 import com.example.android.littlereaderforreddit.R
 import com.squareup.picasso.Picasso
+import io.reactivex.functions.Consumer
 import kotlinx.android.synthetic.main.feed_item.view.*
 import kotlinx.android.synthetic.main.feed_list_header_item.view.*
 
 class RedditFeedsAdapter(val context: Context, val listener: OnClickFeedItemListener) :
-        RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    var feeds: List<FeedChildren>? = null
+        RecyclerView.Adapter<RecyclerView.ViewHolder>(), Consumer<MutableList<FeedDetail>> {
+
+    override fun accept(t: MutableList<FeedDetail>) {
+        feeds = t
+        Log.d("Chuning", "list size " + t.size)
+        notifyDataSetChanged()
+    }
+
+    var feeds: List<FeedDetail>? = null
     private val FEED_ITEM_NO_THUMBNAIL = 0
     private val FEED_ITEM_WITH_THUMBNAIL = 1
     private val LIST_VIEW_HEADER = 2
@@ -37,15 +42,15 @@ class RedditFeedsAdapter(val context: Context, val listener: OnClickFeedItemList
                 openFilterDialog()
             }
         } else if (holder is RedditFeedsViewHolder) {
-            val feedDetail: FeedDetail = feeds!![position - 1].data
-            holder.itemView.subreddit_name.text = feedDetail.subredditName
-            holder.itemView.created_time.text = feedDetail.created.toString()
+            val feedDetail: FeedDetail = feeds!![position - 1]
+            holder.itemView.subreddit_name.text = feedDetail.subreddit_name_prefixed
+            holder.itemView.created_time.text = feedDetail.created_formatted_time.toString()
             holder.itemView.score.text = feedDetail.score.toString()
             holder.itemView.comments.text = feedDetail.num_comments.toString()
             holder.itemView.feed_title.text = feedDetail.title
-            if (hasThumbnailImage(feedDetail.thumbnail)) {
+            if (hasThumbnailImage(feedDetail.large_image)) {
                 Picasso.with(context)
-                        .load(feedDetail.thumbnail)
+                        .load(feedDetail.large_image)
                         .into(holder.itemView.thumbnail)
             }
             holder.itemView.setOnClickListener {
@@ -75,8 +80,8 @@ class RedditFeedsAdapter(val context: Context, val listener: OnClickFeedItemList
         when (position) {
             0 -> return LIST_VIEW_HEADER
             else -> {
-                val feedDetail: FeedDetail = feeds!![position - 1].data
-                return if (hasThumbnailImage(feedDetail.thumbnail)) FEED_ITEM_WITH_THUMBNAIL else FEED_ITEM_NO_THUMBNAIL
+                val feedDetail: FeedDetail = feeds!![position - 1]
+                return if (hasThumbnailImage(feedDetail.large_image)) FEED_ITEM_WITH_THUMBNAIL else FEED_ITEM_NO_THUMBNAIL
             }
         }
     }

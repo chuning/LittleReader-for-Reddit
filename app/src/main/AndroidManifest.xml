@@ -24,8 +24,13 @@
         <activity
             android:name=".UI.RedditListActivity"
             android:launchMode="singleTop" />
-        <activity android:name=".UI.RedditDetailActivity"
-            android:launchMode="singleTop" ></activity>
-    </application>
 
+        <activity android:name=".UI.RedditDetailActivity"
+            android:launchMode="singleTop" />
+
+        <service
+            android:name=".Network.FeedSyncIntentService"
+            android:exported="false" />
+
+    </application>
 </manifest>

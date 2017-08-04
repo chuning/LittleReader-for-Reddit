@@ -30,12 +30,12 @@ class RedditDetailActivity : AppCompatActivity(), LoaderCallbacks<List<Comments>
         setContentView(R.layout.activity_reddit_detail)
 
         detail = intent.getParcelableExtra(Constant.EXTRA_FEED_DETAIL)
-        subreddit_name.text = detail.subredditName
-        created_time.text = detail.created.toString()
+        subreddit_name.text = detail.subreddit_name_prefixed
+        created_time.text = detail.created_formatted_time
         score.text = detail.score.toString()
         num_comments.text = detail.num_comments.toString()
         feed_title.text = detail.title
-        val image = detail.largeImage
+        val image = detail.large_image
         if (hasThumbnailImage(image)) {
               Picasso.with(this)
                       .load(image)
