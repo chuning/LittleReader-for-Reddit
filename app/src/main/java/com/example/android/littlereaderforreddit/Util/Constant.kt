@@ -16,5 +16,7 @@ object Constant {
     val DURATION = "permanent"
     val ACCESS_TOKEN = "access_token"
     val EXTRA_FEED_DETAIL = "extra_feed_detail"
+    val EXTRA_SYNC_FOR_PAGING = "extra_sync_for_paging"
+    val EXTRA_LAST_LINK_ID = "extra_last_link_id"
     val SUBREDDIT_PREFERENCE = "subreddit_preference"
 }

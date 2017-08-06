@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.support.v4.content.AsyncTaskLoader
 import android.support.v4.content.Loader
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import com.example.android.littlereaderforreddit.Data.*
@@ -23,12 +24,15 @@ import com.example.android.littlereaderforreddit.Util.SharedPreferenceUtil
 import com.google.gson.Gson
 import com.squareup.sqlbrite2.BriteDatabase
 import com.squareup.sqlbrite2.SqlBrite
+import com.squareup.sqlbrite2.mapToList
+import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_reddit_list.*
+import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
 
 class RedditListActivity : AppCompatActivity(), RedditFeedsAdapter.OnClickFeedItemListener {
@@ -37,31 +41,45 @@ class RedditListActivity : AppCompatActivity(), RedditFeedsAdapter.OnClickFeedIt
     private val SUBREDDIT_LOADER_ID = 200
     lateinit var adapter: RedditFeedsAdapter
     lateinit var context: Context
-    lateinit var sqlBrite: SqlBrite
     lateinit var db: BriteDatabase
     lateinit var disposable: Disposable
+    lateinit var scrollListener: EndlessRecyclerViewScrollListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reddit_list)
         val recyclerView = this.feeds_recycler
         adapter = RedditFeedsAdapter(this, this)
+        val linearLayoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = linearLayoutManager
+        scrollListener = object : EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
+                loadNextData(page)
+            }
+        }
+        recyclerView.addOnScrollListener(scrollListener)
+
+        db = Db.getInstance(this)
+
         context = this
         supportLoaderManager.initLoader(SUBREDDIT_LOADER_ID, null, subredditLoaderListener)
         SyncUtils.initialize(this)
+    }
 
-        sqlBrite = SqlBrite.Builder().build()
-        db = sqlBrite.wrapDatabaseHelper(FeedDbHelper.getInstance(this), Schedulers.io())
+    private fun loadNextData(page: Int) {
+        SyncUtils.startSyncForPaging(context, adapter.getLastFeedId())
     }
 
     override fun onResume() {
         super.onResume()
 
         val query = FeedDetail.FACTORY.SelectAll()
-        disposable = db.createQuery("reddit_feeds", query.statement)
-                .mapToList{cursor -> FeedDetail.SELECT_ALL_MAPPER.map(cursor)}
+        disposable = db.createQuery(query.tables, query.statement)
+                .mapToList{cursor ->
+                    FeedDetail.SELECT_ALL_MAPPER.map(cursor)
+                }
+                .debounce(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(adapter)
 

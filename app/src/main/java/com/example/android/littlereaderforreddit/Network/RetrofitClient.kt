@@ -100,8 +100,12 @@ class RetrofitClient {
         return token
     }
 
-    fun getFeeds(): Call<Feeds> {
-        return reditApi.getRedditFeeds()
+    fun getFeeds(link: String?): Call<Feeds> {
+        val params = HashMap<String, String>()
+        if (link != null) {
+            params.put("after", "t3_" + link)
+        }
+        return reditApi.getRedditFeeds(params)
     }
 
     fun getComments(id: String): Call<List<Comments>> {

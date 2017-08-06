@@ -17,19 +17,22 @@ import kotlinx.android.synthetic.main.feed_list_header_item.view.*
 class RedditFeedsAdapter(val context: Context, val listener: OnClickFeedItemListener) :
         RecyclerView.Adapter<RecyclerView.ViewHolder>(), Consumer<MutableList<FeedDetail>> {
 
-    override fun accept(t: MutableList<FeedDetail>) {
-        feeds = t
-        Log.d("Chuning", "list size " + t.size)
+    override fun accept(list: MutableList<FeedDetail>) {
+        feeds = list
         notifyDataSetChanged()
     }
 
-    var feeds: List<FeedDetail>? = null
+    private var feeds: List<FeedDetail>? = null
     private val FEED_ITEM_NO_THUMBNAIL = 0
     private val FEED_ITEM_WITH_THUMBNAIL = 1
     private val LIST_VIEW_HEADER = 2
 
     interface OnClickFeedItemListener {
         fun clickItem(detail: FeedDetail)
+    }
+
+    fun getLastFeedId(): String? {
+        return feeds?.last()?.id
     }
 
     override fun getItemCount(): Int {

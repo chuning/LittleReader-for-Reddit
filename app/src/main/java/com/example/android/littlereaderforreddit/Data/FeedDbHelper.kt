@@ -4,6 +4,9 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.example.android.littlereaderforreddit.FeedsModel
+import com.squareup.sqlbrite2.BriteDatabase
+import com.squareup.sqlbrite2.SqlBrite
+import io.reactivex.schedulers.Schedulers
 
 
 class FeedDbHelper private constructor(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
@@ -26,6 +29,32 @@ class FeedDbHelper private constructor(context: Context) : SQLiteOpenHelper(cont
                 instance = FeedDbHelper(context)
             }
             return instance!!
+        }
+    }
+}
+
+class SqlBriteDb {
+    companion object {
+        private var _instance: SqlBrite? = null
+        fun getInstance(): SqlBrite {
+            if (_instance == null) {
+                _instance = SqlBrite.Builder().build()
+            }
+            return _instance!!
+        }
+    }
+}
+
+class Db {
+    companion object {
+        private var _instance: BriteDatabase? = null
+        fun getInstance(context: Context): BriteDatabase {
+            if (_instance == null) {
+                _instance = SqlBriteDb.getInstance()
+                        .wrapDatabaseHelper(FeedDbHelper.getInstance(context), Schedulers.io())
+                _instance!!.setLoggingEnabled(true)
+            }
+            return _instance!!
         }
     }
 }
