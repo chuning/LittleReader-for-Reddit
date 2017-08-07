@@ -7,32 +7,43 @@ import com.google.gson.reflect.TypeToken
  * Created by chuningluo on 17/8/2.
  */
 
+data class SubredditDetail(
+        val data: Subreddit
+)
+
 data class Subreddit(
-        val data: SubredditDetail
+        val display_name: String
 ) {
     companion object {
-        val hashsetType = object : TypeToken<HashSet<Subreddit>>(){}.type
-        fun serialize(subreddits: Set<Subreddit>): String {
-            return Gson().toJson(subreddits, hashsetType)
+        val listType = object : TypeToken<List<Subreddit>>(){}.type
+        fun serialize(subreddits: List<Subreddit>): String {
+            return Gson().toJson(subreddits, listType)
         }
 
-        fun deserialize(string: String?): HashSet<Subreddit> {
+        fun deserialize(string: String?): List<Subreddit> {
             if (string == null) {
-                return HashSet<Subreddit>()
+                return emptyList()
             }
-            return Gson().fromJson(string, hashsetType)
+            return Gson().fromJson(string, listType)
         }
     }
-}
 
-data class SubredditDetail(
-        val display_name: String
-)
+    override fun equals(other: Any?): Boolean {
+        if (other!= null && other is Subreddit) {
+            return this.display_name == other.display_name
+        }
+        return false
+    }
+
+    override fun hashCode(): Int {
+        return this.display_name.hashCode()
+    }
+}
 
 data class SubredditResponse(
         val data: SubredditData
 )
 
 data class SubredditData(
-        val children: List<Subreddit>?
+        val children: List<SubredditDetail>?
 )

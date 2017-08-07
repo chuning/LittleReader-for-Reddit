@@ -1,7 +1,6 @@
 package com.example.android.littlereaderforreddit.UI
 
 import android.content.Context
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,54 +17,56 @@ class RedditFeedsAdapter(val context: Context, val listener: OnClickFeedItemList
         RecyclerView.Adapter<RecyclerView.ViewHolder>(), Consumer<MutableList<FeedDetail>> {
 
     override fun accept(list: MutableList<FeedDetail>) {
+        if (list.isNotEmpty()) {
+            lastFeedId = list.last().id
+        }
         feeds = list
+        Log.d("Chuning", "accept list" + list.size)
         notifyDataSetChanged()
     }
 
     private var feeds: List<FeedDetail>? = null
+    var lastFeedId: String? = null
     private val FEED_ITEM_NO_THUMBNAIL = 0
     private val FEED_ITEM_WITH_THUMBNAIL = 1
     private val LIST_VIEW_HEADER = 2
 
     interface OnClickFeedItemListener {
-        fun clickItem(detail: FeedDetail)
+        fun onClickItem(detail: FeedDetail)
+        fun onClickFilterButton()
     }
 
-    fun getLastFeedId(): String? {
-        return feeds?.last()?.id
+    fun reset() {
+        lastFeedId = null
+        feeds = null
+        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int {
-        return feeds?.size ?: 0
+        return (feeds?.size ?: 0) + 1
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is ListHeaderViewHolder) {
             holder.itemView.filter.setOnClickListener {
-                openFilterDialog()
+                listener.onClickFilterButton()
             }
         } else if (holder is RedditFeedsViewHolder) {
             val feedDetail: FeedDetail = feeds!![position - 1]
-            holder.itemView.subreddit_name.text = feedDetail.subreddit_name_prefixed
-            holder.itemView.created_time.text = feedDetail.created_formatted_time.toString()
+            holder.itemView.subreddit_name.text = feedDetail.subreddit
+            holder.itemView.created_time.text = feedDetail.created_formatted_time
             holder.itemView.score.text = feedDetail.score.toString()
             holder.itemView.comments.text = feedDetail.num_comments.toString()
             holder.itemView.feed_title.text = feedDetail.title
-            if (hasThumbnailImage(feedDetail.large_image)) {
+            if (hasThumbnailImage(feedDetail.thumbnail)) {
                 Picasso.with(context)
-                        .load(feedDetail.large_image)
+                        .load(feedDetail.thumbnail)
                         .into(holder.itemView.thumbnail)
             }
             holder.itemView.setOnClickListener {
-                listener.clickItem(feedDetail)
+                listener.onClickItem(feedDetail)
             }
         }
-    }
-
-    private fun openFilterDialog() {
-        val frag = FilterDialogFragment.newInstance()
-        val activity = context as AppCompatActivity
-        frag.show(activity.supportFragmentManager, FilterDialogFragment::class.java.simpleName)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

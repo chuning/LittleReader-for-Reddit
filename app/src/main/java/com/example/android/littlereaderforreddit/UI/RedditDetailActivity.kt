@@ -6,9 +6,10 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader
 import android.support.v4.content.Loader
 import android.support.v4.view.ViewCompat
-
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
+import android.text.Html
+import android.text.method.LinkMovementMethod
+
 import android.view.View
 import com.example.android.littlereaderforreddit.Data.Comments
 import com.example.android.littlereaderforreddit.Data.FeedDetail
@@ -30,7 +31,7 @@ class RedditDetailActivity : AppCompatActivity(), LoaderCallbacks<List<Comments>
         setContentView(R.layout.activity_reddit_detail)
 
         detail = intent.getParcelableExtra(Constant.EXTRA_FEED_DETAIL)
-        subreddit_name.text = detail.subreddit_name_prefixed
+        subreddit_name.text = detail.subreddit
         created_time.text = detail.created_formatted_time
         score.text = detail.score.toString()
         num_comments.text = detail.num_comments.toString()
@@ -42,6 +43,18 @@ class RedditDetailActivity : AppCompatActivity(), LoaderCallbacks<List<Comments>
                       .into(imageView)
         } else {
             imageView.visibility = View.GONE
+        }
+
+        if (detail.selftext_html.isNullOrEmpty()) {
+            feed_body.visibility = View.GONE
+        } else {
+            val text = detail.selftext_html
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                feed_body.setText(Html.fromHtml(Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY).toString(),Html.FROM_HTML_MODE_LEGACY))
+            } else {
+                feed_body.text = Html.fromHtml(Html.fromHtml(text).toString())
+            }
+            feed_body.movementMethod = LinkMovementMethod.getInstance()
         }
 
         commentsAdapter = CommentsAdapter()

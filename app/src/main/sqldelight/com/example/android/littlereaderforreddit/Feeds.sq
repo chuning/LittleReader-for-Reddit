@@ -1,11 +1,10 @@
 CREATE TABLE reddit_feeds (
-    _id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     id TEXT NOT NULL,
     author TEXT NOT NULL,
     title TEXT NOT NULL,
     num_comments INTEGER NOT NULL,
     created_formatted_time TEXT NOT NULL,
-    score INTEGER,
+    score INTEGER NOT NULL,
     thumbnail TEXT,
     large_image TEXT,
     self_text_html TEXT,
@@ -23,8 +22,8 @@ WHERE id = ?;
 
 InsertFeed:
 INSERT INTO reddit_feeds(id, author, title, num_comments,
-created_formatted_time, score, large_image, self_text_html, subreddit_name_prefixed)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+created_formatted_time, score, thumbnail, large_image, self_text_html, subreddit_name_prefixed)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 
 DeleteAll:

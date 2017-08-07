@@ -9,7 +9,8 @@ import com.example.android.littlereaderforreddit.R
 import kotlinx.android.synthetic.main.subreddit_filter_item.view.*
 
 
-class FilterAdapter(val subreddits: List<Subreddit>?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class FilterAdapter(val subreddits: List<Subreddit>, var excludedSubreddits: MutableSet<Subreddit>) :
+        RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val HEADER_VIEW_TYPE = 0
     private val SUBREDDIT_VIEW_TYPE = 1
 
@@ -25,7 +26,17 @@ class FilterAdapter(val subreddits: List<Subreddit>?) : RecyclerView.Adapter<Rec
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is FilterViewHolder) {
-            holder.itemView.subreddit_filter_name.text = subreddits!![position - 1].data.display_name
+            val subreddit = subreddits[position - 1]
+            holder.itemView.subreddit_filter_name.text = subreddit.display_name
+            holder.itemView.checkbox.isChecked = !excludedSubreddits.contains(subreddit)
+            holder.itemView.checkbox.setOnCheckedChangeListener {buttonView, isChecked ->
+                 buttonView.isChecked = isChecked
+                 if (isChecked) {
+                     excludedSubreddits.remove(subreddit)
+                 } else {
+                     excludedSubreddits.add(subreddit)
+                 }
+            }
         }
     }
 
@@ -37,7 +48,7 @@ class FilterAdapter(val subreddits: List<Subreddit>?) : RecyclerView.Adapter<Rec
     }
 
     override fun getItemCount(): Int {
-        return subreddits?.size ?: 0
+        return subreddits.size + 1
     }
 
     class FilterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

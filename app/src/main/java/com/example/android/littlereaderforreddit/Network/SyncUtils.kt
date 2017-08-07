@@ -20,12 +20,14 @@ class SyncUtils {
 
         fun startImmediateSync(context: Context) {
             val intentService = Intent(context, FeedSyncIntentService::class.java)
+            intentService.putExtra(Constant.EXTRA_SYNC_FOR_PAGING, false)
             context.startService(intentService)
         }
 
         fun startSyncForPaging(context: Context, link: String?) {
             val intentService = Intent(context, FeedSyncIntentService::class.java)
             intentService.putExtra(Constant.EXTRA_LAST_LINK_ID, link)
+            intentService.putExtra(Constant.EXTRA_SYNC_FOR_PAGING, true)
             context.startService(intentService)
         }
     }

@@ -3,6 +3,7 @@ package com.example.android.littlereaderforreddit.Network
 import android.content.Context
 import android.util.Log
 import com.example.android.littlereaderforreddit.Data.*
+import com.example.android.littlereaderforreddit.Manager.SubredditsManager
 import com.example.android.littlereaderforreddit.RedditApplication
 import com.example.android.littlereaderforreddit.Util.Constant
 import com.facebook.stetho.okhttp3.StethoInterceptor
@@ -105,7 +106,13 @@ class RetrofitClient {
         if (link != null) {
             params.put("after", "t3_" + link)
         }
-        return reditApi.getRedditFeeds(params)
+        val excludedSubreddits = SubredditsManager.getExcludedSubredditsList()
+        if (excludedSubreddits.isNotEmpty()) {
+            val selected = SubredditsManager.getSelectedSubredditsList().joinToString("+")
+            return reditApi.getRedditFeedsWithFilter(selected, params)
+        } else {
+            return reditApi.getRedditFeeds(params)
+        }
     }
 
     fun getComments(id: String): Call<List<Comments>> {

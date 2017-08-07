@@ -9,8 +9,12 @@ import retrofit2.http.Path
 import retrofit2.http.QueryMap
 
 interface RedditApi {
-    @GET("/top.json")
+    @GET("/hot.json")
     fun getRedditFeeds(@QueryMap paramMap: Map<String, String>): Call<Feeds>
+
+    @GET("r/{subreddits}/hot.json")
+    fun getRedditFeedsWithFilter(@Path("subreddits") subreddits: String,
+                                 @QueryMap paramMap: Map<String, String>): Call<Feeds>
 
     @GET("/comments/{id}.json")
     fun getComments(@Path("id") id: String): Call<List<Comments>>
