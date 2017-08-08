@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "439738906124",
+    "firebase_url": "https://littlereaderforreddit.firebaseio.com",
+    "project_id": "littlereaderforreddit",
+    "storage_bucket": "littlereaderforreddit.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:439738906124:android:95dde7e3f87b301b",
+        "android_client_info": {
+          "package_name": "com.example.android.littlereaderforreddit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "439738906124-c5n5hesikhe8un81pqb3uf8mar9au0j4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1qw6EKwXCvROUEjgeTMbgvSqeWLRb80M"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -12,7 +12,6 @@ import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import com.example.android.littlereaderforreddit.Data.*
-import com.example.android.littlereaderforreddit.Network.FeedSyncIntentService
 import com.example.android.littlereaderforreddit.Network.RetrofitClient
 import com.example.android.littlereaderforreddit.Network.SyncUtils
 import com.example.android.littlereaderforreddit.R

@@ -62,7 +62,6 @@ class RedditDetailActivity : AppCompatActivity(), LoaderCallbacks<List<Comments>
         comments_recycler.layoutManager = LinearLayoutManager(this)
         ViewCompat.setNestedScrollingEnabled(comments_recycler, false)
         supportLoaderManager.initLoader(COMMENTS_LOADER, null, this)
-
     }
 
     override fun onLoaderReset(loader: Loader<List<Comments>>?) {
