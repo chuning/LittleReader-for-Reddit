@@ -3,6 +3,7 @@ package com.example.android.littlereaderforreddit.Util
 import android.content.Context
 import android.content.SharedPreferences
 import com.example.android.littlereaderforreddit.RedditApplication
+import java.security.Timestamp
 
 class SharedPreferenceUtil {
 
@@ -25,5 +26,12 @@ class SharedPreferenceUtil {
         fun get(key: String): String? {
             return prefs.getString(key, null)
         }
+
+        fun saveNotificationTime(timestamp: Long) {
+            val editor = prefs.edit()
+            editor.putLong(Constant.NOTIFICATION_LAST_TIMESTAMP, timestamp)
+            editor.apply()
+        }
+
     }
 }

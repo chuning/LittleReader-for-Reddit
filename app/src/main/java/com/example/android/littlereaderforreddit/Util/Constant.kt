@@ -19,5 +19,8 @@ object Constant {
     val EXTRA_SYNC_FOR_PAGING = "extra_sync_for_paging"
     val EXTRA_LAST_LINK_ID = "extra_last_link_id"
     val SUBREDDIT_EXCLUDE_PREFERENCE = "subreddit_exclude_preference"
+    val NOTIFICATION_PREFERENCE = "notification_preference"
+    val NOTIFICATION_LAST_TIMESTAMP = "notification_last_time_stamp"
     val SUBREDDIT_LIST = "subreddit_list"
+    val FEED_SYNC_TAG = "feed_sync_tag"
 }

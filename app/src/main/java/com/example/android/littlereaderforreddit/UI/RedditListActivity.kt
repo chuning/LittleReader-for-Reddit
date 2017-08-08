@@ -53,16 +53,13 @@ class RedditListActivity : AppCompatActivity(), RedditFeedsAdapter.OnClickFeedIt
         disposables = CompositeDisposable()
 
         context = this
+        SyncUtils.initialize(this)
+        refreshFeedList()
         supportLoaderManager.initLoader(SUBREDDIT_LOADER_ID, null, subredditLoaderListener)
     }
 
     private fun loadNextData(page: Int) {
         SyncUtils.startSyncForPaging(context, adapter.lastFeedId)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        refreshFeedList()
     }
 
     private fun refreshFeedList() {
