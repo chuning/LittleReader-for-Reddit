@@ -2,15 +2,12 @@ package com.example.android.littlereaderforreddit.UI
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.app.DialogFragment
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import com.example.android.littlereaderforreddit.Data.Subreddit
 import com.example.android.littlereaderforreddit.Manager.SubredditsManager
 import com.example.android.littlereaderforreddit.R
-import com.example.android.littlereaderforreddit.Util.Constant
-import com.example.android.littlereaderforreddit.Util.SharedPreferenceUtil
 
 
 class FilterDialogFragment: DialogFragment() {
@@ -32,7 +29,7 @@ class FilterDialogFragment: DialogFragment() {
         builder.setView(view)
 
         val recyclerView = view.findViewById(R.id.filter_recycler) as RecyclerView
-        val listener = activity as FilterDialogListener
+        val listener = targetFragment as FilterDialogListener
 
         val subreddits = SubredditsManager.getAllSubredditsList()
         var subredditsPrefs = SubredditsManager.getExcludedSubredditsList()

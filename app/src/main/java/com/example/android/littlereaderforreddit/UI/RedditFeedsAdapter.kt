@@ -13,7 +13,7 @@ import io.reactivex.functions.Consumer
 import kotlinx.android.synthetic.main.feed_item.view.*
 import kotlinx.android.synthetic.main.feed_list_header_item.view.*
 
-class RedditFeedsAdapter(val context: Context, val listener: OnClickFeedItemListener) :
+class RedditFeedsAdapter(val context: Context, val listener: OnFeedItemClickListener) :
         RecyclerView.Adapter<RecyclerView.ViewHolder>(), Consumer<MutableList<FeedDetail>> {
 
     override fun accept(list: MutableList<FeedDetail>) {
@@ -31,9 +31,9 @@ class RedditFeedsAdapter(val context: Context, val listener: OnClickFeedItemList
     private val FEED_ITEM_WITH_THUMBNAIL = 1
     private val LIST_VIEW_HEADER = 2
 
-    interface OnClickFeedItemListener {
-        fun onClickItem(detail: FeedDetail)
-        fun onClickFilterButton()
+    interface OnFeedItemClickListener {
+        fun onItemClick(detail: FeedDetail)
+        fun onFilterButtonClick()
     }
 
     fun reset() {
@@ -49,7 +49,7 @@ class RedditFeedsAdapter(val context: Context, val listener: OnClickFeedItemList
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is ListHeaderViewHolder) {
             holder.itemView.filter.setOnClickListener {
-                listener.onClickFilterButton()
+                listener.onFilterButtonClick()
             }
         } else if (holder is RedditFeedsViewHolder) {
             val feedDetail: FeedDetail = feeds!![position - 1]
@@ -64,7 +64,7 @@ class RedditFeedsAdapter(val context: Context, val listener: OnClickFeedItemList
                         .into(holder.itemView.thumbnail)
             }
             holder.itemView.setOnClickListener {
-                listener.onClickItem(feedDetail)
+                listener.onItemClick(feedDetail)
             }
         }
     }

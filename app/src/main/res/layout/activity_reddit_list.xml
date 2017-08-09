@@ -1,27 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/feeds_recycler"
+    <fragment
+        android:id="@+id/reddit_list_fragment"
+        android:name="com.example.android.littlereaderforreddit.UI.RedditListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical"/>
+        tools:layout="@layout/fragment_reddit_list"/>
 
-    <TextView
-        android:id="@+id/error_message_display"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:textSize="20sp"
-        android:visibility="invisible" />
-
-    <ProgressBar
-        android:id="@+id/loading_indicator"
-        android:layout_height="42dp"
-        android:layout_width="42dp"
-        android:layout_gravity="center"
-        android:visibility="invisible" />
-
-</FrameLayout>
+</LinearLayout>
