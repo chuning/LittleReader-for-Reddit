@@ -43,8 +43,20 @@
             android:id="@+id/imageView"
             android:layout_width="match_parent"
             android:layout_height="200dp"
+            android:contentDescription="@string/image"
             android:scaleType="centerCrop"
             android:layout_below="@id/feed_title" />
+
+        <TextView
+            android:id="@+id/link_url"
+            android:padding="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/imageView"
+            android:textColor="@color/white"
+            android:background="@color/black_overlay_alpha"
+            android:maxLines="1"
+            android:ellipsize="end" />
 
         <TextView
             android:id="@+id/feed_body"
@@ -56,25 +68,31 @@
             android:autoLink="web"
             tools:text="What's your favorite icecream?"/>
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/score"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/feed_body"
             android:paddingTop="8dp"
             android:textSize="12sp"
-            tools:text="2pts"/>
+            android:drawablePadding="5dp"
+            android:drawableStart="@drawable/ic_arrow_upward_black_18dp"
+            android:drawableEnd="@drawable/ic_arrow_downward_black_18dp"
+            android:drawableTint="@color/black_overlay"
+            tools:text="2"/>
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/num_comments"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:paddingLeft="10dp"
             android:layout_below="@id/feed_body"
-            android:layout_toRightOf="@id/score"
+            android:layout_marginStart="150dp"
+            android:paddingTop="8dp"
             android:textSize="12sp"
-            tools:text="20 comments"/>
+            android:drawableTint="@color/black_overlay"
+            android:drawablePadding="8dp"
+            android:drawableStart="@drawable/ic_chat_bubble_outline_black_18dp"
+            tools:text="200000"/>
 
     </RelativeLayout>
 

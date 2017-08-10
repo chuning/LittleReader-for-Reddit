@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.android.littlereaderforreddit.Data.FeedDetail
 import com.example.android.littlereaderforreddit.R
+import com.example.android.littlereaderforreddit.Util.DateTimeUtil
 import com.squareup.picasso.Picasso
 import io.reactivex.functions.Consumer
 import kotlinx.android.synthetic.main.feed_item.view.*
@@ -54,9 +55,11 @@ class RedditFeedsAdapter(val context: Context, val listener: OnFeedItemClickList
         } else if (holder is RedditFeedsViewHolder) {
             val feedDetail: FeedDetail = feeds!![position - 1]
             holder.itemView.subreddit_name.text = feedDetail.subreddit
-            holder.itemView.created_time.text = feedDetail.created_formatted_time
+            holder.itemView.created_time.text = String.format("·%s", DateTimeUtil.deltaTime(feedDetail.created_time))
             holder.itemView.score.text = feedDetail.score.toString()
+            holder.itemView.score.contentDescription = feedDetail.score.toString() + "likes"
             holder.itemView.comments.text = feedDetail.num_comments.toString()
+            holder.itemView.comments.contentDescription = feedDetail.num_comments.toString() + "comments"
             holder.itemView.feed_title.text = feedDetail.title
             if (hasThumbnailImage(feedDetail.thumbnail)) {
                 Picasso.with(context)

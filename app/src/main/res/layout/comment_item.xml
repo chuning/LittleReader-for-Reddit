@@ -21,7 +21,7 @@
         android:id="@+id/created_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/user_name"
+        android:layout_toEndOf="@id/user_name"
         android:textSize="12sp"
         tools:text="·1h" />
 
@@ -32,14 +32,19 @@
         android:layout_below="@id/user_name"
         android:paddingBottom="8dp"
         android:paddingTop="8dp"
+        android:autoLink="web"
         tools:text="What's your favorite icecream?" />
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/score"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/comment_content"
-        android:layout_alignParentRight="true"
+        android:drawableTint="@color/black_overlay"
+        android:drawableStart="@drawable/ic_arrow_upward_black_18dp"
+        android:drawableEnd="@drawable/ic_arrow_downward_black_18dp"
+        android:drawablePadding="8dp"
+        android:layout_alignParentEnd="true"
         android:textSize="12sp"
         tools:text="2pts" />
 

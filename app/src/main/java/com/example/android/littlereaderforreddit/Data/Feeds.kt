@@ -35,12 +35,13 @@ data class FeedDetail(
         val author: String,
         val title: String,
         val num_comments: Long,
-        @SerializedName("created") val created_formatted_time: String,
+        @SerializedName("created_utc") val created_time: Long,
         val score: Long,
         var preview: Preview? = null,
         val thumbnail: String? = null,
         var large_image: String? = null,
         val selftext_html: String?,
+        val url: String? = null,
         val subreddit: String) : FeedsModel, Parcelable {
 
     constructor(parcel: Parcel) : this(
@@ -48,11 +49,12 @@ data class FeedDetail(
             author = parcel.readString(),
             title = parcel.readString(),
             num_comments=  parcel.readLong(),
-            created_formatted_time = parcel.readString(),
+            created_time = parcel.readLong(),
             score = parcel.readLong(),
             thumbnail = parcel.readString(),
             large_image = parcel.readString(),
             selftext_html = parcel.readString(),
+            url = parcel.readString(),
             subreddit = parcel.readString())
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -60,11 +62,12 @@ data class FeedDetail(
         parcel.writeString(author)
         parcel.writeString(title)
         parcel.writeLong(num_comments)
-        parcel.writeString(created_formatted_time)
+        parcel.writeLong(created_time)
         parcel.writeLong(score)
         parcel.writeString(thumbnail ?: "")
         parcel.writeString(large_image)
         parcel.writeString(selftext_html?: "")
+        parcel.writeString(url?:"")
         parcel.writeString(subreddit)
     }
 
@@ -84,8 +87,8 @@ data class FeedDetail(
         return num_comments
     }
 
-    override fun created_formatted_time(): String {
-        return created_formatted_time
+    override fun created_time(): Long {
+        return created_time
     }
 
     override fun score(): Long {
@@ -104,6 +107,10 @@ data class FeedDetail(
         return subreddit
     }
 
+    override fun url(): String? {
+        return url
+    }
+
     override fun thumbnail(): String? {
         return thumbnail
     }
@@ -115,10 +122,10 @@ data class FeedDetail(
     companion object CREATOR : Parcelable.Creator<FeedDetail> {
         val FACTORY = FeedsModel.Factory<FeedDetail>(object : FeedsModel.Creator<FeedDetail> {
             override fun create(id: String, author: String, title: String, num_comments: Long,
-                                created_formatted_time: String, score: Long, thumbnail: String?, large_image: String?,
-                                self_text_html: String?, subreddit_name_prefixed: String): FeedDetail {
+                                created_formatted_time: Long, score: Long, thumbnail: String?, large_image: String?,
+                                self_text_html: String?, url: String?, subreddit_name_prefixed: String): FeedDetail {
                 return FeedDetail(id, author, title, num_comments, created_formatted_time,
-                        score, null, thumbnail, large_image, self_text_html, subreddit_name_prefixed)
+                        score, null, thumbnail, large_image, self_text_html, url, subreddit_name_prefixed)
             }
         })
         val SELECT_ALL_MAPPER: RowMapper<FeedDetail> = FACTORY.selectAllMapper()

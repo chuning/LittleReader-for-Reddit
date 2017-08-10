@@ -1,19 +1,19 @@
 package com.example.android.littlereaderforreddit.UI
 
+import android.accounts.NetworkErrorException
 import android.app.Fragment
 import android.app.LoaderManager
 import android.content.AsyncTaskLoader
 import android.content.Context
 import android.content.Loader
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.example.android.littlereaderforreddit.Data.Db
 import com.example.android.littlereaderforreddit.Data.FeedDetail
 import com.example.android.littlereaderforreddit.Data.Subreddit
@@ -27,6 +27,7 @@ import com.squareup.sqlbrite2.BriteDatabase
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_reddit_list.*
+import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 class RedditListFragment: Fragment(), RedditFeedsAdapter.OnFeedItemClickListener,
@@ -69,9 +70,12 @@ class RedditListFragment: Fragment(), RedditFeedsAdapter.OnFeedItemClickListener
         disposables = CompositeDisposable()
 
         SyncUtils.initialize(context)
-        refreshFeedList()
         loaderManager.initLoader(SUBREDDIT_LOADER_ID, null, subredditLoaderListener)
         return view
+    }
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        refreshFeedList()
     }
 
     private fun loadNextData(page: Int) {
@@ -79,6 +83,7 @@ class RedditListFragment: Fragment(), RedditFeedsAdapter.OnFeedItemClickListener
     }
 
     private fun refreshFeedList() {
+        loading_indicator.visibility = View.VISIBLE
         val query = FeedDetail.FACTORY.SelectAll()
         disposables.add(db.createQuery(query.tables, query.statement)
                 .mapToList{cursor ->
@@ -86,7 +91,17 @@ class RedditListFragment: Fragment(), RedditFeedsAdapter.OnFeedItemClickListener
                 }
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext { list ->
+                    loading_indicator.visibility = View.INVISIBLE
+                    if (list.isEmpty()) {
+                        error_message_display.text = "Error fetching your feed."
+                    }
+                }
+                .doOnError {
+                    loading_indicator.visibility = View.INVISIBLE
+                }
                 .subscribe(adapter))
+
     }
 
     override fun onDestroyView() {
@@ -105,6 +120,7 @@ class RedditListFragment: Fragment(), RedditFeedsAdapter.OnFeedItemClickListener
     }
 
     override fun onCickFilterDone() {
+        loading_indicator.visibility = View.VISIBLE
         adapter.reset()
         scrollListener.resetState()
         SyncUtils.startImmediateSync(context)
@@ -148,18 +164,20 @@ class RedditListFragment: Fragment(), RedditFeedsAdapter.OnFeedItemClickListener
 
         override fun onLoadFinished(loader: Loader<SubredditResponse>?, data: SubredditResponse?) {
             loading_indicator.visibility = View.INVISIBLE
-            showResults(data != null)
+            showResults(true)
             if (data != null && data.data.children != null) {
                 val subreddits = data.data.children
                 val serializedStr = Subreddit.serialize(subreddits.map { it -> it.data })
                 SharedPreferenceUtil.save(Constant.SUBREDDIT_LIST, serializedStr)
+            } else {
+                Toast.makeText(context, "Error fetching subscribed subreddits", Toast.LENGTH_SHORT)
             }
         }
     }
 
-    private fun showResults(hasResult: Boolean) {
-        Log.d("Chuning", "show results " + hasResult)
-        feeds_recycler.visibility = if (hasResult) View.VISIBLE else View.INVISIBLE
-        error_message_display.visibility = if (hasResult) View.INVISIBLE else View.VISIBLE
+    private fun showResults(show: Boolean) {
+        Log.d("Chuning", "show results " + show)
+        feeds_recycler.visibility = if (show) View.VISIBLE else View.INVISIBLE
+        error_message_display.visibility = if (show) View.INVISIBLE else View.VISIBLE
     }
 }

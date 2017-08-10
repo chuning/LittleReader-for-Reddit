@@ -3,7 +3,9 @@ package com.example.android.littlereaderforreddit.UI
 import android.app.Fragment
 import android.app.LoaderManager
 import android.content.AsyncTaskLoader
+import android.content.Intent
 import android.content.Loader
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.view.ViewCompat
 import android.support.v7.widget.LinearLayoutManager
@@ -17,6 +19,8 @@ import com.example.android.littlereaderforreddit.Data.FeedDetail
 import com.example.android.littlereaderforreddit.Network.RetrofitClient
 import com.example.android.littlereaderforreddit.R
 import com.example.android.littlereaderforreddit.Util.Constant
+import com.example.android.littlereaderforreddit.Util.DateTimeUtil
+import com.example.android.littlereaderforreddit.Util.StringFormatUtil
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.feed_detail.*
 import kotlinx.android.synthetic.main.fragment_reddit_detail.*
@@ -51,7 +55,7 @@ class RedditDetailFragment: Fragment(), LoaderManager.LoaderCallbacks<List<Comme
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         subreddit_name.text = detail.subreddit
-        created_time.text = detail.created_formatted_time
+        created_time.text = String.format("·%s", DateTimeUtil.deltaTime(detail.created_time))
         score.text = detail.score.toString()
         num_comments.text = detail.num_comments.toString()
         feed_title.text = detail.title
@@ -60,6 +64,15 @@ class RedditDetailFragment: Fragment(), LoaderManager.LoaderCallbacks<List<Comme
             Picasso.with(activity)
                     .load(image)
                     .into(imageView)
+            if (detail.url != null) {
+                link_url.setText(detail.url)
+                link_url.visibility = View.VISIBLE
+                imageView.setOnClickListener {
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.setData(Uri.parse(detail.url))
+                    startActivity(intent)
+                }
+            }
         } else {
             imageView.visibility = View.GONE
         }
@@ -68,12 +81,7 @@ class RedditDetailFragment: Fragment(), LoaderManager.LoaderCallbacks<List<Comme
             feed_body.visibility = View.GONE
         } else {
             val text = detail.selftext_html
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                feed_body.setText(Html.fromHtml(Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY).toString(), Html.FROM_HTML_MODE_LEGACY))
-            } else {
-                feed_body.text = Html.fromHtml(Html.fromHtml(text).toString())
-            }
-            feed_body.movementMethod = LinkMovementMethod.getInstance()
+            StringFormatUtil.formatHtml(text?:"", feed_body)
         }
 
         commentsAdapter = CommentsAdapter()
@@ -86,6 +94,7 @@ class RedditDetailFragment: Fragment(), LoaderManager.LoaderCallbacks<List<Comme
     }
 
     override fun onLoadFinished(loader: Loader<List<Comments>>?, commentList: List<Comments>?) {
+        loading_indicator.visibility = View.GONE
         if (commentList?.size?:0 > 1) {
             commentsAdapter.setComments(commentList!![1])
         }
@@ -93,8 +102,14 @@ class RedditDetailFragment: Fragment(), LoaderManager.LoaderCallbacks<List<Comme
 
     override fun onCreateLoader(id: Int, args: Bundle?): Loader<List<Comments>> {
         return object: AsyncTaskLoader<List<Comments>>(activity) {
+            var comments: List<Comments>? = null
             override fun onStartLoading() {
-                forceLoad()
+                if (comments != null) {
+                    deliverResult(comments)
+                } else {
+                    loading_indicator.visibility = View.VISIBLE
+                    forceLoad()
+                }
             }
             override fun loadInBackground(): List<Comments>? {
                 try {
@@ -107,6 +122,11 @@ class RedditDetailFragment: Fragment(), LoaderManager.LoaderCallbacks<List<Comme
                     e.printStackTrace()
                     return null
                 }
+            }
+
+            override fun deliverResult(data: List<Comments>?) {
+                comments = data
+                super.deliverResult(data)
             }
         }
     }

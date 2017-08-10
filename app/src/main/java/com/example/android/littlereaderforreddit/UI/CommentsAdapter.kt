@@ -8,6 +8,8 @@ import com.example.android.littlereaderforreddit.Data.CommentDetail
 import com.example.android.littlereaderforreddit.Data.Comments
 import com.example.android.littlereaderforreddit.Data.CommentsChildren
 import com.example.android.littlereaderforreddit.R
+import com.example.android.littlereaderforreddit.Util.DateTimeUtil
+import com.example.android.littlereaderforreddit.Util.StringFormatUtil
 import kotlinx.android.synthetic.main.comment_item.view.*
 import java.util.*
 
@@ -36,9 +38,9 @@ class CommentsAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val commentDetail = commentDetails!![position]
         holder.itemView.user_name.text = commentDetail.author
-        holder.itemView.created_time.text = commentDetail.created.toString()
-        holder.itemView.comment_content.text = commentDetail.body
+        holder.itemView.created_time.text = String.format("·%s", DateTimeUtil.deltaTime(commentDetail.created_utc!!))
         holder.itemView.score.text = commentDetail.score.toString()
+        StringFormatUtil.formatHtml(commentDetail.body_html?:"", holder.itemView.comment_content)
     }
 
     class CommentsViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {

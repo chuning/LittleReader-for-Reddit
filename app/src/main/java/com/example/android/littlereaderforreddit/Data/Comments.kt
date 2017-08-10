@@ -13,9 +13,9 @@ data class CommentsChildren(
 
 data class CommentDetail(
         val depth: Int,
-        val body: String?,
+        val body_html: String?,
         val author: String?,
-        val created: Long?,
+        val created_utc: Long?,
         val score: Long?,
         val replies: Comments?,
         val count: Int?

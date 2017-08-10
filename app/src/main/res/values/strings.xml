@@ -8,5 +8,6 @@
     <string name="action_sign_in">Sign in</string>
     <string name="filter">Filter</string>
     <string name="settings">settings</string>
+    <string name="image">image</string>
 
 </resources>
