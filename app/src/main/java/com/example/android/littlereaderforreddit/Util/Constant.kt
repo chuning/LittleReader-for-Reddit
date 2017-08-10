@@ -15,6 +15,9 @@ object Constant {
     val OAUTH_SCOPE = "read,mysubreddits"
     val DURATION = "permanent"
     val ACCESS_TOKEN = "access_token"
+    val REFRESH_TOKEN = "refresh_token"
+    val EXPIRE_TIME = "expire_time"
+    val CODE = "code"
     val EXTRA_FEED_DETAIL = "extra_feed_detail"
     val EXTRA_SYNC_FOR_PAGING = "extra_sync_for_paging"
     val EXTRA_LAST_LINK_ID = "extra_last_link_id"
@@ -23,4 +26,5 @@ object Constant {
     val NOTIFICATION_LAST_TIMESTAMP = "notification_last_time_stamp"
     val SUBREDDIT_LIST = "subreddit_list"
     val FEED_SYNC_TAG = "feed_sync_tag"
+    val TOKEN_SYNC_TAG = "token_sync_tag"
 }

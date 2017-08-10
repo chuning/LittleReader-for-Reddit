@@ -4,9 +4,9 @@ import android.os.AsyncTask
 import com.firebase.jobdispatcher.JobParameters
 import com.firebase.jobdispatcher.JobService
 
-class FeedFirebaseJobService: JobService() {
-    var asyncTask: AsyncTask<Void, Void, Void>? = null
 
+class AuthenticationJobService: JobService() {
+    var asyncTask: AsyncTask<Void, Void, Void>? = null
     override fun onStopJob(job: JobParameters?): Boolean {
         asyncTask?.cancel(true)
         return true
@@ -15,7 +15,7 @@ class FeedFirebaseJobService: JobService() {
     override fun onStartJob(job: JobParameters): Boolean {
         asyncTask = object: AsyncTask<Void, Void, Void>() {
             override fun doInBackground(vararg params: Void?): Void? {
-                SyncTask.syncFeed(null, this@FeedFirebaseJobService, true)
+                SyncTask.syncAuth(isRefresh = true)
                 jobFinished(job, false)
                 return null
             }
@@ -27,4 +27,5 @@ class FeedFirebaseJobService: JobService() {
         asyncTask!!.execute();
         return true
     }
+
 }

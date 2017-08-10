@@ -41,7 +41,7 @@ class NotificationUtil {
 
                 val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 notificationManager.notify(FEED_NOTIFICATION_ID, builder.build())
-                SharedPreferenceUtil.saveNotificationTime(System.currentTimeMillis())
+                SharedPreferenceUtil.saveLong(Constant.NOTIFICATION_LAST_TIMESTAMP, System.currentTimeMillis())
             }
         }
     }

@@ -13,15 +13,19 @@ import java.util.concurrent.TimeUnit
 class SyncUtils {
     companion object {
         private var sInitialized: Boolean = false
-        private val SYNC_INTERVAL_HOURS = 1
-        private val SYNC_INTERVAL_SECONDS = TimeUnit.HOURS.toSeconds(SYNC_INTERVAL_HOURS.toLong()).toInt()
-        private val SYNC_FLEXTIME_SECONDS = SYNC_INTERVAL_SECONDS / 3
+        private val FEED_SYNC_INTERVAL_HOURS = 1
+        private val FEED_SYNC_INTERVAL_SECONDS = TimeUnit.HOURS.toSeconds(FEED_SYNC_INTERVAL_HOURS.toLong()).toInt()
+        private val FEED_SYNC_FLEXTIME_SECONDS = FEED_SYNC_INTERVAL_SECONDS / 3
+        private val TOKEN_SYNC_INTERVAL_MINUTES = 55
+        private val TOKEN_SYNC_INTERVAL_SECONDS = TimeUnit.MINUTES.toSeconds(TOKEN_SYNC_INTERVAL_MINUTES.toLong()).toInt()
+        private val TOKEN_SYNC_FLEXTIME_SECONDS = TOKEN_SYNC_INTERVAL_SECONDS / 3
 
         fun initialize(context: Context) {
             if (sInitialized) return
             sInitialized = true
             startImmediateSync(context)
             scheduleJobDispatcherForFeeds(context)
+            scheduleRefreshToken(context)
         }
 
         fun startImmediateSync(context: Context) {
@@ -39,18 +43,32 @@ class SyncUtils {
 
         fun scheduleJobDispatcherForFeeds(context: Context) {
             val dispatcher = FirebaseJobDispatcher(GooglePlayDriver(context))
-
             val feedSyncJob = dispatcher.newJobBuilder()
                     .setService(FeedFirebaseJobService::class.java)
                     .setTag(Constant.FEED_SYNC_TAG)
                     .setConstraints(Constraint.ON_ANY_NETWORK)
                     .setLifetime(Lifetime.FOREVER)
                     .setRecurring(true)
-                    .setTrigger(Trigger.executionWindow(SYNC_INTERVAL_SECONDS,
-                            SYNC_INTERVAL_SECONDS + SYNC_FLEXTIME_SECONDS))
+                    .setTrigger(Trigger.executionWindow(FEED_SYNC_INTERVAL_SECONDS,
+                            FEED_SYNC_INTERVAL_SECONDS + FEED_SYNC_FLEXTIME_SECONDS))
                     .setReplaceCurrent(true)
                     .build()
             dispatcher.schedule(feedSyncJob)
+        }
+
+        fun scheduleRefreshToken(context: Context) {
+            val dispatcher = FirebaseJobDispatcher(GooglePlayDriver(context))
+            val tokenRefreshJob = dispatcher.newJobBuilder()
+                    .setService(AuthenticationJobService::class.java)
+                    .setTag(Constant.TOKEN_SYNC_TAG)
+                    .setConstraints(Constraint.ON_ANY_NETWORK)
+                    .setLifetime(Lifetime.FOREVER)
+                    .setRecurring(true)
+                    .setTrigger(Trigger.executionWindow(TOKEN_SYNC_INTERVAL_SECONDS,
+                            TOKEN_SYNC_INTERVAL_SECONDS + TOKEN_SYNC_FLEXTIME_SECONDS))
+                    .setReplaceCurrent(true)
+                    .build()
+            dispatcher.schedule(tokenRefreshJob)
         }
     }
 

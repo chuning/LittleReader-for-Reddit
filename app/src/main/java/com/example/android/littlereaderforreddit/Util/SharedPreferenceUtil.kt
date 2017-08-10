@@ -27,10 +27,14 @@ class SharedPreferenceUtil {
             return prefs.getString(key, null)
         }
 
-        fun saveNotificationTime(timestamp: Long) {
+        fun saveLong(key: String, value: Long) {
             val editor = prefs.edit()
-            editor.putLong(Constant.NOTIFICATION_LAST_TIMESTAMP, timestamp)
+            editor.putLong(key, value)
             editor.apply()
+        }
+
+        fun getLong(key: String): Long {
+            return prefs.getLong(key, -1)
         }
 
     }
