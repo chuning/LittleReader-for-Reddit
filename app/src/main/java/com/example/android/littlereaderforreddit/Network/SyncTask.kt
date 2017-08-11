@@ -1,11 +1,18 @@
 package com.example.android.littlereaderforreddit.Network
 
 import android.content.Context
+import android.content.Intent
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
+import android.widget.Toast
 import com.example.android.littlereaderforreddit.Data.Db
 import com.example.android.littlereaderforreddit.FeedsModel
+import com.example.android.littlereaderforreddit.R
 import com.example.android.littlereaderforreddit.Util.Constant
 import com.example.android.littlereaderforreddit.Util.NotificationUtil
 import com.example.android.littlereaderforreddit.Util.SharedPreferenceUtil
+import kotlinx.android.synthetic.main.fragment_reddit_list.*
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
@@ -14,7 +21,8 @@ import java.util.concurrent.TimeUnit
  */
 class SyncTask {
     companion object {
-        fun syncFeed(lastLinkId: String?, context: Context, attemptNotification: Boolean= false) {
+        fun syncFeed(lastLinkId: String?, context: Context, attemptNotification: Boolean= false): Boolean {
+            var success = false
             try {
                 val response = RetrofitClient.instance.getFeeds(lastLinkId).execute()
                 if (response.isSuccessful) {
@@ -37,18 +45,21 @@ class SyncTask {
                             briteDb.executeInsert(insertFeed.table, insertFeed.program)
                         }
                         transaction.markSuccessful()
+                        if (attemptNotification) {
+                            NotificationUtil.notifyUserOfNewFeed(context, feedDetails.first())
+                        }
+                        val intent = Intent()
+                        intent.action = Constant.FEED_SYNC_UPDATE
+                        context.sendBroadcast(intent)
+                        success = true
                     } finally {
                         transaction.end()
                     }
-
-                    if (attemptNotification) {
-                        NotificationUtil.notifyUserOfNewFeed(context, feedDetails.first())
-                    }
                 }
             } catch (e: Exception) {
-               e.printStackTrace()
+                e.printStackTrace()
             }
-
+            return success
         }
 
         fun syncAuth(isRefresh: Boolean): Boolean {

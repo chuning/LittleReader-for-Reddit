@@ -54,6 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/imageView"
             android:textColor="@color/white"
+            android:visibility="invisible"
             android:background="@color/black_overlay_alpha"
             android:maxLines="1"
             android:ellipsize="end" />

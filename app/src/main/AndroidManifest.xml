@@ -23,14 +23,13 @@
         <activity
             android:name=".UI.RedditListActivity"
             android:launchMode="singleTop" />
-
-        <activity android:name=".UI.RedditDetailActivity"
+        <activity
+            android:name=".UI.RedditDetailActivity"
             android:launchMode="singleTop" />
 
         <service
             android:name=".Network.FeedSyncIntentService"
             android:exported="false" />
-
         <service
             android:name=".Network.FeedFirebaseJobService"
             android:exported="false">
@@ -38,7 +37,6 @@
                 <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
             </intent-filter>
         </service>
-
         <service
             android:name=".Network.AuthenticationJobService"
             android:exported="false">
@@ -47,5 +45,23 @@
             </intent-filter>
         </service>
 
+        <receiver android:name=".widget.FeedWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.ACTION_DATA_UPDATED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/app_widget_info" />
+        </receiver>
+
+        <service
+            android:name=".widget.FeedWidgetRemoteService"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <activity android:name=".UI.SettingsActivity"></activity>
     </application>
+
 </manifest>

@@ -18,6 +18,14 @@
             android:scrollbars="vertical"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
+        <TextView
+            android:id="@+id/error_message_display"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:textSize="20sp"
+            android:visibility="invisible" />
+
         <ProgressBar
             android:id="@+id/loading_indicator"
             android:layout_height="42dp"

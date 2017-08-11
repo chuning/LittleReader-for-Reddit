@@ -95,7 +95,10 @@ class RedditDetailFragment: Fragment(), LoaderManager.LoaderCallbacks<List<Comme
 
     override fun onLoadFinished(loader: Loader<List<Comments>>?, commentList: List<Comments>?) {
         loading_indicator.visibility = View.GONE
-        if (commentList?.size?:0 > 1) {
+        if (commentList == null) {
+            error_message_display.visibility = View.VISIBLE
+            error_message_display.text = resources.getString(R.string.error_fetching_comments)
+        } else {
             commentsAdapter.setComments(commentList!![1])
         }
     }

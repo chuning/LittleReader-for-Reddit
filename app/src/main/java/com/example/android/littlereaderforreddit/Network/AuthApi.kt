@@ -8,4 +8,7 @@ import retrofit2.http.QueryMap
 interface AuthApi {
     @POST("v1/access_token")
     fun getToken(@QueryMap paramMap: Map<String, String>): Call<Token>
+
+    @POST("v1/revoke_token")
+    fun revokeToken(@QueryMap paramMap: Map<String, String>): Call<Token>
 }

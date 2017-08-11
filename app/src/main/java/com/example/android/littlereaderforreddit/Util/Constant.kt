@@ -26,5 +26,6 @@ object Constant {
     val NOTIFICATION_LAST_TIMESTAMP = "notification_last_time_stamp"
     val SUBREDDIT_LIST = "subreddit_list"
     val FEED_SYNC_TAG = "feed_sync_tag"
+    val FEED_SYNC_UPDATE = "android.appwidget.action.ACTION_DATA_UPDATED"
     val TOKEN_SYNC_TAG = "token_sync_tag"
 }

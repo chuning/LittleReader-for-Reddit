@@ -1,7 +1,6 @@
 package com.example.android.littlereaderforreddit.Network
 
 import com.example.android.littlereaderforreddit.Data.*
-import com.example.android.littlereaderforreddit.Manager.SubredditsManager
 import com.example.android.littlereaderforreddit.Util.Constant
 import com.example.android.littlereaderforreddit.Util.SharedPreferenceUtil
 import com.facebook.stetho.okhttp3.StethoInterceptor
@@ -9,7 +8,6 @@ import okhttp3.Credentials
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -20,9 +18,6 @@ class AuthClient {
     private val BASE_URL = "https://www.reddit.com/api/"
 
     init {
-        val interceptor = HttpLoggingInterceptor()
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
-
         val auth = Credentials.basic("17Kzwoo6MsSefg", "")
         val authInterceptor = object : Interceptor {
             override fun intercept(chain: Interceptor.Chain) : Response {
@@ -36,7 +31,6 @@ class AuthClient {
 
         val client = OkHttpClient.Builder()
                 .addInterceptor(authInterceptor)
-                .addInterceptor(interceptor)
                 .addNetworkInterceptor(StethoInterceptor())
                 .build()
 
@@ -78,4 +72,11 @@ class AuthClient {
         return authApi.getToken(params)
     }
 
+    fun logout(): Call<Token> {
+        val params = HashMap<String, String>()
+        val token = SharedPreferenceUtil.get(Constant.ACCESS_TOKEN)
+        params.put("token", token!!)
+        params.put("token_type_hint", "access_token")
+        return authApi.revokeToken(params)
+    }
 }

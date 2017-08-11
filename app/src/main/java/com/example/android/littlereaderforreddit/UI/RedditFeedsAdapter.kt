@@ -22,7 +22,6 @@ class RedditFeedsAdapter(val context: Context, val listener: OnFeedItemClickList
             lastFeedId = list.last().id
         }
         feeds = list
-        Log.d("Chuning", "accept list" + list.size)
         notifyDataSetChanged()
     }
 

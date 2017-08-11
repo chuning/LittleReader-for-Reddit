@@ -15,10 +15,10 @@ import com.example.android.littlereaderforreddit.Network.SyncTask
 import com.example.android.littlereaderforreddit.R
 import com.example.android.littlereaderforreddit.Util.Constant
 import com.example.android.littlereaderforreddit.Util.SharedPreferenceUtil
+import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
 
-    lateinit var loginButton : Button
     lateinit var authDialog : Dialog
     lateinit var webView : WebView
 
@@ -33,7 +33,6 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        loginButton = findViewById(R.id.login) as Button
         setUpLoginDialog()
     }
 
@@ -43,7 +42,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun setUpLoginDialog() {
-        loginButton.setOnClickListener {
+        login.setOnClickListener {
             authDialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
             authDialog.setContentView(R.layout.dialog_auth)
             webView = authDialog.findViewById(R.id.webv) as WebView

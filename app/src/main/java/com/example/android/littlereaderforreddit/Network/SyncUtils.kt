@@ -2,6 +2,7 @@ package com.example.android.littlereaderforreddit.Network
 
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import com.example.android.littlereaderforreddit.Util.Constant
 import com.firebase.jobdispatcher.*
 import java.util.concurrent.TimeUnit
@@ -29,9 +30,13 @@ class SyncUtils {
         }
 
         fun startImmediateSync(context: Context) {
-            val intentService = Intent(context, FeedSyncIntentService::class.java)
-            intentService.putExtra(Constant.EXTRA_SYNC_FOR_PAGING, false)
-            context.startService(intentService)
+            val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val networkInfo = cm.activeNetworkInfo
+            if (networkInfo != null && networkInfo.isConnectedOrConnecting()) {
+                val intentService = Intent(context, FeedSyncIntentService::class.java)
+                intentService.putExtra(Constant.EXTRA_SYNC_FOR_PAGING, false)
+                context.startService(intentService)
+            }
         }
 
         fun startSyncForPaging(context: Context, link: String?) {

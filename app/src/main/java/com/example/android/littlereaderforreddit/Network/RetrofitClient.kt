@@ -9,7 +9,6 @@ import com.google.gson.*
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -21,9 +20,6 @@ class RetrofitClient {
     private val BASE_URL = "https://oauth.reddit.com"
 
     init {
-        val interceptor = HttpLoggingInterceptor()
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
-
         val networkInterceptor = object : Interceptor {
             override fun intercept(chain: Interceptor.Chain) : Response {
                 val originalRequest = chain.request()
@@ -40,7 +36,6 @@ class RetrofitClient {
         }
 
         val client = OkHttpClient.Builder()
-                .addInterceptor(interceptor)
                 .addNetworkInterceptor(StethoInterceptor())
                 .addNetworkInterceptor(networkInterceptor)
                 .build()
@@ -53,7 +48,7 @@ class RetrofitClient {
                 val replies = jsonObject.get("replies")
                 val body = jsonObject.get("body")?.asString
                 val author = jsonObject.get("author")?.asString
-                val created = jsonObject.get("created")?.asLong
+                val created = jsonObject.get("created_utc")?.asLong
                 val score = jsonObject.get("score")?.asLong
                 if (replies == null || replies.isJsonNull
                         || (replies.isJsonPrimitive) && replies.asString.isEmpty()) {

@@ -1,6 +1,5 @@
 package com.example.android.littlereaderforreddit.UI
 
-import android.accounts.NetworkErrorException
 import android.app.Fragment
 import android.app.LoaderManager
 import android.content.AsyncTaskLoader
@@ -9,7 +8,6 @@ import android.content.Loader
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,7 +25,6 @@ import com.squareup.sqlbrite2.BriteDatabase
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_reddit_list.*
-import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 class RedditListFragment: Fragment(), RedditFeedsAdapter.OnFeedItemClickListener,
@@ -40,7 +37,7 @@ class RedditListFragment: Fragment(), RedditFeedsAdapter.OnFeedItemClickListener
     private var listener: OnItemClickListener? = null
 
     interface OnItemClickListener {
-        fun onItemClick(detail: FeedDetail)
+        fun onFeedClick(detail: FeedDetail)
     }
 
     override fun onAttach(context: Context?) {
@@ -101,7 +98,6 @@ class RedditListFragment: Fragment(), RedditFeedsAdapter.OnFeedItemClickListener
                     loading_indicator.visibility = View.INVISIBLE
                 }
                 .subscribe(adapter))
-
     }
 
     override fun onDestroyView() {
@@ -110,7 +106,7 @@ class RedditListFragment: Fragment(), RedditFeedsAdapter.OnFeedItemClickListener
     }
 
     override fun onItemClick(detail: FeedDetail) {
-        listener?.onItemClick(detail)
+        listener?.onFeedClick(detail)
     }
 
     override fun onFilterButtonClick() {
@@ -176,7 +172,6 @@ class RedditListFragment: Fragment(), RedditFeedsAdapter.OnFeedItemClickListener
     }
 
     private fun showResults(show: Boolean) {
-        Log.d("Chuning", "show results " + show)
         feeds_recycler.visibility = if (show) View.VISIBLE else View.INVISIBLE
         error_message_display.visibility = if (show) View.INVISIBLE else View.VISIBLE
     }

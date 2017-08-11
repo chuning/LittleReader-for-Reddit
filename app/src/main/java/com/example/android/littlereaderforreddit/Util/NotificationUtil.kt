@@ -19,9 +19,9 @@ class NotificationUtil {
         private val NOTIFICATION_MIN_INTERVAL_HOUR = 12
 
         fun notifyUserOfNewFeed(context: Context, feed: FeedDetail) {
-            val notificationEnabled = SharedPreferenceUtil.prefs.getBoolean(Constant.NOTIFICATION_PREFERENCE, true)
+            val notificationEnabled = SharedPreferenceUtil.getBoolean(Constant.NOTIFICATION_PREFERENCE, true)
 
-            val lastNotificationTime = SharedPreferenceUtil.prefs.getLong(Constant.NOTIFICATION_LAST_TIMESTAMP, 0)
+            val lastNotificationTime = SharedPreferenceUtil.getLong(Constant.NOTIFICATION_LAST_TIMESTAMP)
             val elapsedTime = System.currentTimeMillis() - lastNotificationTime
 
             if (notificationEnabled && elapsedTime >= DateUtils.HOUR_IN_MILLIS * NOTIFICATION_MIN_INTERVAL_HOUR) {

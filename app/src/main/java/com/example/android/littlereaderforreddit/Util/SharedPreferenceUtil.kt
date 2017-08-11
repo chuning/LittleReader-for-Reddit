@@ -17,7 +17,7 @@ class SharedPreferenceUtil {
                 return _prefs!!
             }
 
-        fun save(key: String, value: String) {
+        fun save(key: String, value: String?) {
             val editor = prefs.edit()
             editor.putString(key, value)
             editor.apply()
@@ -35,6 +35,22 @@ class SharedPreferenceUtil {
 
         fun getLong(key: String): Long {
             return prefs.getLong(key, -1)
+        }
+
+        fun saveBoolean(key: String, value: Boolean) {
+            val editor = prefs.edit()
+            editor.putBoolean(key, value)
+            editor.apply()
+        }
+
+        fun getBoolean(key: String, default: Boolean): Boolean{
+            return prefs.getBoolean(key, default)
+        }
+
+        fun clearAll() {
+            val editor = prefs.edit()
+            editor.clear()
+            editor.commit()
         }
 
     }
